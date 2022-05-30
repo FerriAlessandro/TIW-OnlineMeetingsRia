@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Home</title>
+<link rel="stylesheet" type="text/css" media="all"
+	href="../css/style.css"/>
+</head>
+<body>
+	<div align="right">
+		<a href="Logout">Logout</a>
+	</div>
+	<h1>Your Personal Meeting Agenda</h1>
+	<div id="errorMsg" class="errorMessage"></div>
+	<p>Welcome back <span id="id_username"></span></p>
+		<table>
+			<tr>
+				<td>
+<!-- if there are meetings: "This is a list of the meetings organize by you"
+else "You haven't organized any meeting yet" -->
+					<p id="organizedMeetingsMsg"></p>
+
+					<table id="organizedMeetings" class="boxed">
+
+						<thead>
+							<tr>
+								<th>Title</th>
+								<th>Date and time</th>
+								<th>Duration</th>
+							</tr>
+						</thead>
+						<tbody id="organizedMeetingsBody"></tbody>
+					</table>
+				</td>
+				<td>
+<!-- if there are meetings: "This is a list of the meetings you were invited to"
+else "You haven't been invited to any meeting yet" -->
+					<p id="invitedMeetingsMsg"></p>
+					<table id="invitedMeetings" class="boxed">
+						<thead>
+							<tr>
+								<th>Title</th>
+								<th>Date and time</th>
+								<th>Duration</th>
+								<th>Organizer</th>
+							</tr>
+						</thead>
+						<tbody id="invitedMeetingsBody"></tbody>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="center">
+					<p id="createMeetingMsg">Complete the form below to create a new meeting</p>
+					<form id="createMeetingForm" action="#">
+						<fieldset>
+							Title: <input type="text" name="title" required/> <br><br>
+							Date and starting time: <input type="datetime-local" name="date" required/><br><br>
+							Duration (in minutes): <input type="number" name="duration" required /><br><br>
+							<input id="submitForm" type="button" value="Submit">
+						</fieldset>
+					</form>
+				</td>
+			</tr>
+			</table>
+</body>
+</html>
