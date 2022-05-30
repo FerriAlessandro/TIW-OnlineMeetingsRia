@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Login page</title>
+</head>
+<body>
+	<h1>TIW - ONLINE MEETING MANAGER</h1>
+	<!--  input type: type of the input (does a check client-side for email, obscures password ecc
+		  name: the name that the data field sent by the form will have when we retrieve it
+		  value: the value of the field (the name 'submit' on the button or a default 'username' 
+		  that appears before the user compiles the field  -->
+	<form action="#">
+		<fieldset>
+			<legend>Registration:</legend>
+			Username: <input type="text" name="username" required> <br> <br>
+			Password: <input type="password" name="password" required> <br> <br>
+			Repeat Password: <input type="password" name="repeat_password"required> <br> <br>
+			E-mail: <input type="email" name="email"required> <br> <br>
+			<input id="registrationButton" type="button" value="Register"> <br>
+			<p id="registrationErrMsg"></p><!-- if an error occurred -->
+		</fieldset>
+	</form>
+	<br>
+	<br> 
+	<br>
+	<form action="#">
+		<fieldset>
+			<legend>Login:</legend>
+			Username: <input type="text" name="username" required> <br> <br>
+			Password: <input type="password" name="password" required> <br> <br>
+			<input id="loginButton" type="button" value="Login"> <br>
+			<p id="loginErrMsg"></p><!-- if an error occurred -->
+		</fieldset>
+	</form>
+</body>
+</html>
