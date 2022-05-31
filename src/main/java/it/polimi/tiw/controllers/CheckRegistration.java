@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +24,7 @@ import it.polimi.tiw.beans.User;
 import it.polimi.tiw.utils.ConnectionHandler;
 
 @WebServlet("/Registration")
+@MultipartConfig
 public class CheckRegistration extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
