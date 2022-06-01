@@ -1,9 +1,9 @@
-(function(){ //Instant invocation not necessary?
+(function(){ //Instant invocation, otherwise the function becomes a Window's' (global object) property
 	
 	document.getElementById("loginButton").addEventListener('click', (e) =>{
 		var loginForm = e.target.closest("form");
 		if(loginForm.checkValidity()){
-			sendData("POST", 'Login', loginForm, function(xhr){
+			serverCall("POST", 'Login', loginForm, function(xhr){
 				
 				if(xhr.readyState == XMLHttpRequest.DONE){
 					var msg = xhr.responseText;
