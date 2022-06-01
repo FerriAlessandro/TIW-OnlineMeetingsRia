@@ -7,9 +7,6 @@ function sendData(method, url, form, callback){
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function(){
 		
-		if(xhr.status === 200 && xhr.readyState == XMLHttpRequest.DONE) //we reset the form fields only if the request was successful
-			reset=true;
-		
 		callback(xhr);
 	}
 	
@@ -21,7 +18,7 @@ function sendData(method, url, form, callback){
 	else 
 		xhr.send();
 		
-	if(reset===true && form!==null)
+	if(form!==null)
 		form.reset();
 	
 }
