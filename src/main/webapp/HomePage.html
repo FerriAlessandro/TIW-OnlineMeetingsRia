@@ -57,11 +57,29 @@ else "You haven't been invited to any meeting yet" -->
 							Title: <input type="text" name="title" required/> <br><br>
 							Date and starting time: <input type="datetime-local" name="date" required/><br><br>
 							Duration (in minutes): <input type="number" name="duration" required /><br><br>
-							<input id="submitForm" type="button" value="Submit">
+							<input id="submitForm" type="button" class="submit" value="Submit">
 						</fieldset>
 					</form>
 				</td>
 			</tr>
 			</table>
+			
+			<div class="modalWindow">
+			  <div class="modalHeader">
+			    <span class="close">&times;</span>
+			    <h2>Choose participants:</h2>
+			  </div>
+			  <div class="modalBody">
+			  <p id="modalMsg"></p>
+			    <form id="participantsForm" action=#>
+			    	<fieldset id="participantsFieldset">
+			    	</fieldset>
+			    	<fieldset>
+			    		<input id="submitParticipans" type="button" class="submitParticipants" value="Submit">
+			    		<input id="cancel" type="button" class="cancel" value="Cancel">
+			    	</fieldset>
+			    </form>
+			  </div>
+</div>
 </body>
 </html>
