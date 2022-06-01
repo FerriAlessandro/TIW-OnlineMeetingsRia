@@ -10,4 +10,8 @@ function MeetingList(_msg,_meetingTable,_meetingBody){
 	this.show = function(){
 		this.meetingTable.style.visibility = "visible";
 	}
+	
+	this.populateTable = function(){
+		serverCall()
+	}
 }

@@ -1,7 +1,7 @@
 //AJAX
 
 
-function sendData(method, url, form, callback){
+function serverCall(method, url, form, callback){
 	
 	var reset = false;
 	var xhr = new XMLHttpRequest();

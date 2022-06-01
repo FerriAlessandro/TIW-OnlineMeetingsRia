@@ -53,9 +53,9 @@ public class CreateMeeting extends HttpServlet{
 		}
 
 		meeting.setTitle(request.getParameter("title"));
-		meeting.setOrganizerId(Integer.parseInt(request.getParameter("organizerId")));
+		meeting.setOrganizerId(user.getID());
 		meeting.setDuration(Integer.parseInt(request.getParameter("duration")));
-		meeting.setOrganizerName(request.getParameter("organizerName"));
+		meeting.setOrganizerName(user.getUserName());
 		try {
 			meeting.setDate(formatter.parse(request.getParameter("date")));
 		}catch(ParseException e ) {
@@ -64,13 +64,6 @@ public class CreateMeeting extends HttpServlet{
 			return;
 		}
 		
-		//If someone is trying to create a meeting with someone else's ID or username
-		if(!meeting.getOrganizerName().equals(user.getUserName()) || meeting.getOrganizerId() != user.getID()) {
-			response.setStatus(HttpServletResponse.SC_FORBIDDEN); //Client's identity is known (error 401 if it's not known)
-			response.getWriter().println("You are not authorized to perform this operation");
-			return;
-		}
-			
 		
 		//IF THE USER DIDNT SELECT ANY PARTICIPANT
 		if(request.getParameterValues("user_id") == null) {
@@ -127,7 +120,7 @@ public class CreateMeeting extends HttpServlet{
 		
 		//if the number of selected users is not valid
 		else {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			response.getWriter().println("Too many participants selected");
 //We have many SC_BAD_REQUEST , we need to distinguish them client-side because in this case the number of attempts needs to be increased
 			return;
