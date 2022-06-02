@@ -121,7 +121,8 @@ public class CreateMeeting extends HttpServlet{
 		//if the number of selected users is not valid
 		else {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-			response.getWriter().println("Too many participants selected");
+			response.getWriter().println("Too many participants selected. Please remove " 
+					+ (Meeting.MAX_PARTECIPANTS - selectedUsersID.size()));
 //We have many SC_BAD_REQUEST , we need to distinguish them client-side because in this case the number of attempts needs to be increased
 			return;
 		}

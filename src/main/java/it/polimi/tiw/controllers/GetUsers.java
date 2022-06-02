@@ -25,7 +25,6 @@ public class GetUsers extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
 	
-	
 	public void init()throws ServletException{
 		ServletContext servletContext = getServletContext();
 		this.connection = ConnectionHandler.getConnection(servletContext);

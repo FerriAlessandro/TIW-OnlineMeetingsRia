@@ -1,4 +1,24 @@
-var pageController;
+{
+
+let pageController = new PageController(); //TODO estrarre max num partecipanti dal server quando carichi la pagina
+
+window.addEventListener("load", () => {
+    if (sessionStorage.getItem("username") == null) {
+      window.location.href = "index.html";
+    } else {
+      pageController.start(); 
+      pageController.refresh();
+    }
+  }, false);
+	  
+function PersonalMsg(_username, _personalMsg) {
+    this.username = _username;
+    this.personalMsg = _personalMsg;
+    
+    this.show = function() {
+      this.personalMsg.textContent = this.username;
+    }
+}
 
 function MeetingList(_msg,_meetingTable,_meetingBody){
 	this.msg = _msg;
@@ -24,9 +44,11 @@ function MeetingList(_msg,_meetingTable,_meetingBody){
 					var organizedMeetingList = JSON.parse(message);
 					if (organizedMeetingList.length == 0){
 						self.msg.textContent = "You haven't organized any meeting yet";
-						}
-					else
+					}
+					else{
+						self.msg.textContet = "This is a list of meetings organize by you: ";
 						drawTable(organizedMeetingList);
+					}
 				}
 				else if (xhr.status == 500)
 					self.msg.textContent = message;
@@ -45,9 +67,11 @@ function MeetingList(_msg,_meetingTable,_meetingBody){
 					var invitedMeetingList = JSON.parse(message);
 					if (invitedMeetingList.length == 0){
 						self.msg.textContent = "You haven't been invited to any meeting yet";
-						}
-					else
+					}
+					else{
+						self.msg.textContet = "This is a list of meetings you were invited to: ";
 						drawTable(invitedMeetingList);
+					}
 				}
 				else if (xhr.status == 500)
 					self.msg.textContent = message;
@@ -85,84 +109,187 @@ function MeetingList(_msg,_meetingTable,_meetingBody){
 		
 		this.show(); //sets meetingTable content visible
 	}
+}
 	
-	function MeetingForm(_createMeetingForm, _createMeetingMsg){
-		this.createMeetingForm = _createMeetingForm;
-		this.createMeetingMsg = _createMeetingMsg;
-		this.now = new Date();
+function MeetingForm(_msg,_createMeetingForm, _createMeetingMsg){
+	this.createMeetingForm = _createMeetingForm;
+	this.createMeetingMsg = _createMeetingMsg;
+	this.errormsg = _msg;
+	this.now = new Date();
+	
+	//TODO forse va resettato dopo il refresh? 
+	
+	//TODO provare a sostituire con getELbyId		
+	this.querySelector("input[type='datetime-local']").setAttribute('min',now.toISOString().substring(0,16));
+	this.querySelector("input[type='number']").setAttribute('min',1);
+	
+	this.querySelector("input[type='button'].submit").addEventListener('click', (e) => {
+		var fieldset = e.target.closest('fieldset'), valid = true;
 		
-		//TODO provare a sostituire con getELbyId		
-		this.querySelector("input[type='datetime-local']").setAttribute('min',now.toISOString().substring(0,16));
-		this.querySelector("input[type='number']").setAttribute('min',1);
+		for (let i = 0; i<fieldset.elements.length; i++){
+			if (!fieldset.element[i].checkValidity()){
+				//fieldset.element[i].reportValidity();
+				valid = false;
+				return;
+			}
+		}
 		
-		this.querySelector("input[type='button'].submit").addEventListener('click', (e) => {
-			var fieldset = e.target.closest('fieldset'), valid = true;
-			
-			for (let i = 0; i<fieldset.elements.length; i++){
-				if (!fieldset.element[i].checkValidity()){
-					//fieldset.element[i].reportValidity();
-					valid = false;
-					return;
+		if (valid)
+			pageController.showModalWindow();
+		else 
+			this.errormsg.textContent = "Invalid field content";
+	}, false);
+}
+	
+function ModalWindow(_modalWindow,_modalMsg,_msg){
+	this.msg = _msg;
+	this.modalMsg = _modalMsg;
+	this.attempts = 3;
+	this.modal = _modalWindow;
+	
+	this.populate = function(){
+		
+		serverCall("GET","GetUsers",null, (xhr) => {
+			if (xhr.readyState == 4){
+				var message = xhr.responseText;
+				if (xhr.status == 200){
+					var registeredUsers = JSON.parse(message);
+					if (registeredUsers.length == 0){
+						this.msg.textContent = "No users registered yet. Retry later";
+						return;
+					}
+					else{
+						this.attempts = 3;
+						this.update(registeredUsers);
+						this.modal.style.display ='block';
+						
+					}
+				}
+				else if (xhr.status == 500){
+					this.msg = message;
 				}
 			}
-			
-			if (valid)
-				pageController.showModalWindow();
 		});
 	}
 	
-	function ModalWindow(_modalWindow,_modalMsg,_msg){
-		this.msg = _msg;
-		this.modalWindow = _modalWindow;
-		this.modalMsg = _modalMsg;
-		this.attempts = 3;
+	this.update = function(usersList){		
+		var fieldset, checkbox, label;
+		fieldset = document.getElementById("participantsFieldset");
 		
-		this.populate = function(){
-			var self = this;
+		usersList.forEach(function(user){
+			checkbox = document.createElement("input");
+			checkbox.type = "checkbox";
+			checkbox.name = "user_id";
+			checkbox.value = user.id;
 			
-			serverCall("GET","GetUsers",null, (xhr) => {
-				if (xhr.readyState == 4){
-					var message = xhr.responseText;
-					if (xhr.status == 200){
-						var registeredUsers = JSON.parse(message);
-						if (registeredUsers.length == 0){
-							self.msg.textContent = "No users registered yet. Retry later";
+			label = document.createElement("label");
+			label.appendChild(document.createTextNode(user.userName));
+			
+			fieldset.appendChild(checkbox);
+			fieldset.appendChild(label);
+		});
+		
+		document.getElementById("cancel").addEventListener('click', (e) => {
+			modal.style.display = "none"; //close modal window
+		}, false);
+		
+		document.getElementById("submitParticipants").addEventListener('click', (e) => {
+			var checkedParticipants =  document.querySelectorAll('input[name=user_id]:checked');
+			
+			if (checkedParticipants.lenght == 0){
+				modalMsg.textContent = "Please select at least one participant";
+				return;
+			}
+				
+			else if(checkedParticipants.lenght <= pageController.maxNumParticipants){
+				
+				serverCall("POST","CreateMeeting",checkedParticipants, (xhr) => {
+					
+					if (xhr.readyState == 4){
+						var message = xhr.responseText;
+						
+						if (xhr.status == 200){
+							modal.style.display = "none"; //close modal window
+							pageController.refresh();
+						}
+						
+						else if(xhr.status == 500 || xhr.status == 400 || xhr.status == 403){
+							modalMsg.textContent = message;
 							return;
 						}
-						else{
-							self.attempts = 3;
-							self.update(registeredUsers);
-						}
 					}
-					else if (xhr.status == 500){
-						self.msg = message;
-					}
+				}, false);
+			}
+			else{
+				modalMsg.textContent = "You selected too many participants. Please remove at least " 
+				+ (checkedParticipants.length - pageController.maxNumParticipants);
+				this.attempts--;
+				if (this.attempts == 0){
+					modal.style.display = "none"; //close modal window
+					this.msg.textContent = "Three unsuccessful attempts to create a meeting were made, " +
+					 	"the meeting will not be created";
 				}
-			});
+			}
+		}, false);
+	}
+}
+
+function PageController(){
+	this.globalMsg = document.getElementById('errorMsg');
+	
+	this.start = function(){
+		
+		this.personalMsg = new PersonalMsg(
+			window.sessionStorage.getItem('username'),
+			document.getElementById('id_username')
+		);
+		
+		this.orginzedMeetingsList = new MeetingList(
+			document.getElementById('organizedMeetingsMsg'), 
+			document.getElementById('organizedMeetings'),
+			document.getElementById('organizedMeetingsBody')
+		);
+		
+		this.invitedMeetingsList = new MeetingList(
+			document.getElementById('invitedMeetingsMsg'),
+			document.getElementById('invitedMeetings'),
+			document.getElementById('invitededMeetingsBody')
+		);
+		
+		this.meetingForm = new MeetingForm(
+			document.getElementById('formErrorMsg'),
+			document.getElementById('createMeetingForm'),
+			document.getElementById('createMeetingFormMsg')
+		);
+		
+		this.modalWindow = new ModalWindow(
+			document.getElementsByClassName('modalWindow'),
+			document.getElementById('modalMsg'),
+			this.globalMsg
+		);
+		
+		document.querySelector("a[href='Logout']").addEventListener('click', () => {
+	        window.sessionStorage.removeItem('username');
+	    });
+	     
+	    serverCall("GET","GetMaxNumParticipants",null, (xhr) => {
+		
+			var message = xhr.responseText;
+				if (xhr.status == 200)
+					this.maxNumPartiicpants = JSON.parse(message);
+		});
+		
+		this.refresh = function(){
+			this.organizedMeetingsList.hide();
+			this.invitedMeetingsList.hide();
+			
+			this.organizedMeetingsList.populateOrganizedMeetings();
+			this.invitedMeetingsList.populateInvitedMeetings();
 		}
 		
-		this.update = function(usersList){		
-			var fieldset, checkbox, label, self = this;
-			fieldset = document.getElementById("participantsFieldset");
-			
-			usersList.forEach(function(user){
-				checkbox = document.createElement("input");
-				checkbox.type = "checkbox";
-				checkbox.name = "user_id";
-				checkbox.value = user.id;
-				
-				label = document.createElement("label");
-				label.appendChild(document.createTextNode(user.userName));
-				
-				fieldset.appendChild(checkbox);
-				fieldset.appendChild(label);
-			});
-			
-			document.getElementById("submitParticipants").addEventListener('click', (e) => {
-				
-			});
-			
-			modal.style.display = "block"; //open modal window
+		this.showModalWindow = function(){
+			this.modalWindow.populate();
 		}
 	}
 }
+};
