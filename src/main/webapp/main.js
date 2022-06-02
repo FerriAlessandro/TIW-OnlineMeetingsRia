@@ -1,4 +1,4 @@
-{
+{ //TODO PROVARE A CREARE UNA FORM FITTIZIA CON I DATI RIUNIONE E I PARTECIPANTI CHECKED
 
 let pageController = new PageController(); //TODO estrarre max num partecipanti dal server quando carichi la pagina
 
@@ -52,6 +52,11 @@ function MeetingList(_msg,_meetingTable,_meetingBody){
 				}
 				else if (xhr.status == 500)
 					self.msg.textContent = message;
+				
+				else if(xhr.status==403){
+					window.location.href = xhr.getResponseHeader("Location");
+                  	window.sessionStorage.removeItem('username');
+				}
 			}	
 		});
 	}
@@ -75,6 +80,12 @@ function MeetingList(_msg,_meetingTable,_meetingBody){
 				}
 				else if (xhr.status == 500)
 					self.msg.textContent = message;
+					
+				else if(xhr.status==403){
+					window.location.href = xhr.getResponseHeader("Location");
+                  	window.sessionStorage.removeItem('username');
+				}	
+					
 			}	
 		});
 	}
@@ -116,29 +127,29 @@ function MeetingForm(_msg,_createMeetingForm, _createMeetingMsg){
 	this.createMeetingMsg = _createMeetingMsg;
 	this.errormsg = _msg;
 	this.now = new Date();
-	
-	//TODO forse va resettato dopo il refresh? 
-	
-	//TODO provare a sostituire con getELbyId		
 	this.createMeetingForm.querySelector("input[type='datetime-local']").setAttribute('min',this.now.toISOString().substring(0,16));
 	this.createMeetingForm.querySelector("input[type='number']").setAttribute('min',1);
-	
-	this.createMeetingForm.querySelector("input[type='button'].submit").addEventListener('click', (e) => {
+	this.addButtonListener= function(){
+		this.createMeetingForm.querySelector("input[type='button'].submit").addEventListener('click', (e) => {
 		var fieldset = e.target.closest('fieldset'), valid = true;
-		
 		for (let i = 0; i<fieldset.elements.length; i++){
-			if (!fieldset.element[i].checkValidity()){
-				//fieldset.element[i].reportValidity();
+			if (!fieldset.elements[i].checkValidity()){
+				fieldset.elements[i].reportValidity();
 				valid = false;
 				return;
 			}
 		}
-		
-		if (valid)
-			pageController.showModalWindow();
+		if (valid){
+			this.formCopy = fieldset.cloneNode(true); //copy used with the appenChild method, otherwise we move nodes from the original html
+			pageController.showModalWindow(this.formCopy);
+		}
 		else 
 			this.errormsg.textContent = "Invalid field content";
 	}, false);
+	}
+	
+
+	
 }
 	
 function ModalWindow(_modalWindow,_modalMsg,_msg){
@@ -146,6 +157,70 @@ function ModalWindow(_modalWindow,_modalMsg,_msg){
 	this.modalMsg = _modalMsg;
 	this.attempts = 3;
 	this.modal = _modalWindow;
+	this.addButtonListener = function(){
+		
+		document.getElementById("cancel").addEventListener('click', (e) => {
+			this.modal.style.display = "none"; //close modal window
+		}, false);
+		
+		document.getElementById("submitParticipants").addEventListener('click', (e) => {
+			var checkedParticipants =  document.querySelectorAll('input[name=user_id]:checked');
+			var form = document.createElement('form'); //create a fake form
+			
+			if (checkedParticipants.length == 0){
+				this.modalMsg.textContent = "Please select at least one participant";
+				return;
+			}
+				
+			else if(checkedParticipants.length <= pageController.maxNumParticipants){
+				for(let i=0;pageController.meetingFields.elements.length>0;i++){
+					form.appendChild(pageController.meetingFields.elements[0]); //elements are removed from meetingForm... we need to keep the index at 0
+					}
+				
+				checkedParticipants.forEach(function(participant){
+					form.appendChild(participant); //Add the checked participants
+				});
+				
+				serverCall("POST","CreateMeeting",form, (xhr) => {
+					
+					if (xhr.readyState == 4){
+						var message = xhr.responseText;
+						
+						if (xhr.status == 200){
+							this.modal.style.display = "none"; //close modal window
+							pageController.refresh();
+							var fieldset = document.getElementById("participantsFieldset");
+							fieldset.innerHTML = "";
+						}
+						
+						else if(xhr.status == 500 || xhr.status == 400){
+							this.modalMsg.textContent = message;
+							return;
+						}
+						else if(xhr.status==403){
+							window.location.href = xhr.getResponseHeader("Location");
+                  			window.sessionStorage.removeItem('username');
+						}
+					}
+				});
+			}
+			else{
+				this.attempts--;
+				this.modalMsg.textContent = "You selected too many participants. Please remove at least " 
+				+ (checkedParticipants.length - pageController.maxNumParticipants) + "You have "+ this.attempts +" left!";
+				
+				if (this.attempts == 0){
+					this.modal.style.display = "none"; //close modal window
+					this.msg.textContent = "Three unsuccessful attempts to create a meeting were made, " +
+					 	"the meeting will not be created";
+					this.modalMsg.textContent = "";
+					var fieldset = document.getElementById("participantsFieldset");
+					fieldset.innerHTML = "";
+				}
+			}
+			
+		}, false);
+	}
 	
 	this.populate = function(){
 		
@@ -160,6 +235,7 @@ function ModalWindow(_modalWindow,_modalMsg,_msg){
 					}
 					else{
 						this.attempts = 3;
+						this.msg.textContent = "";
 						this.update(registeredUsers);
 						this.modal.style.display ='block';
 						
@@ -168,14 +244,18 @@ function ModalWindow(_modalWindow,_modalMsg,_msg){
 				else if (xhr.status == 500){
 					this.msg = message;
 				}
+				else if(xhr.status==403){
+					window.location.href = xhr.getResponseHeader("Location");
+                  	window.sessionStorage.removeItem('username');
+				}
 			}
 		});
 	}
 	
 	this.update = function(usersList){		
-		var fieldset, checkbox, label;
+		var fieldset, checkbox, label, br;
 		fieldset = document.getElementById("participantsFieldset");
-		
+		fieldset.innerHTML = "";
 		usersList.forEach(function(user){
 			checkbox = document.createElement("input");
 			checkbox.type = "checkbox";
@@ -187,56 +267,18 @@ function ModalWindow(_modalWindow,_modalMsg,_msg){
 			
 			fieldset.appendChild(checkbox);
 			fieldset.appendChild(label);
+			
+			br = document.createElement("br");
+            fieldset.appendChild(br);
 		});
 		
-		document.getElementById("cancel").addEventListener('click', (e) => {
-			modal.style.display = "none"; //close modal window
-		}, false);
-		
-		document.getElementById("submitParticipants").addEventListener('click', (e) => {
-			var checkedParticipants =  document.querySelectorAll('input[name=user_id]:checked');
-			
-			if (checkedParticipants.lenght == 0){
-				modalMsg.textContent = "Please select at least one participant";
-				return;
-			}
-				
-			else if(checkedParticipants.lenght <= pageController.maxNumParticipants){
-				
-				serverCall("POST","CreateMeeting",checkedParticipants, (xhr) => {
-					
-					if (xhr.readyState == 4){
-						var message = xhr.responseText;
-						
-						if (xhr.status == 200){
-							modal.style.display = "none"; //close modal window
-							pageController.refresh();
-						}
-						
-						else if(xhr.status == 500 || xhr.status == 400 || xhr.status == 403){
-							modalMsg.textContent = message;
-							return;
-						}
-					}
-				}, false);
-			}
-			else{
-				modalMsg.textContent = "You selected too many participants. Please remove at least " 
-				+ (checkedParticipants.length - pageController.maxNumParticipants);
-				this.attempts--;
-				if (this.attempts == 0){
-					modal.style.display = "none"; //close modal window
-					this.msg.textContent = "Three unsuccessful attempts to create a meeting were made, " +
-					 	"the meeting will not be created";
-				}
-			}
-		}, false);
+
 	}
 }
 
 function PageController(){
 	this.globalMsg = document.getElementById('errorMsg');
-	
+	this.maxNumParticipants; 
 	this.start = function(){	
 		var self=this;
 		
@@ -244,6 +286,7 @@ function PageController(){
 			window.sessionStorage.getItem('username'),
 			document.getElementById('id_username')
 		);
+		this.personalMsg.show();
 		
 		this.organizedMeetingsList = new MeetingList(
 			document.getElementById('organizedMeetingsMsg'), 
@@ -264,7 +307,7 @@ function PageController(){
 		);
 		
 		this.modalWindow = new ModalWindow(
-			document.getElementsByClassName('modalWindow'),
+			document.getElementById('modalWindow'),
 			document.getElementById('modalMsg'),
 			this.globalMsg
 		);
@@ -274,11 +317,18 @@ function PageController(){
 	    });
 	     
 	    serverCall("GET","GetMaxNumParticipants",null, (xhr) => {
-		
-			var message = xhr.responseText;
-				if (xhr.status == 200)
-					self.maxNumParticipants = JSON.parse(message);
-		});
+			if (xhr.readyState == 4){
+						
+				var message = xhr.responseText;
+					if (xhr.status == 200)
+						this.maxNumParticipants = parseInt(message);
+				
+					else if(xhr.status==403){
+						window.location.href = xhr.getResponseHeader("Location");
+                  		window.sessionStorage.removeItem('username');
+					}
+				}
+			});
 		
 		this.refresh = function(){
 			this.organizedMeetingsList.hide();
@@ -286,11 +336,17 @@ function PageController(){
 			
 			this.organizedMeetingsList.populateOrganizedMeetings();
 			this.invitedMeetingsList.populateInvitedMeetings();
+			//document.getElementById("createMeetingForm").reset();
+			this.meetingForm.createMeetingForm.reset();
 		}
 		
-		this.showModalWindow = function(){
+		this.showModalWindow = function(_meetingFields){
+			this.meetingFields = _meetingFields;
 			this.modalWindow.populate();
 		}
+		this.meetingForm.addButtonListener();
+		this.modalWindow.addButtonListener();
 	}
+	
 }
 };

@@ -42,9 +42,9 @@ public class CreateMeeting extends HttpServlet{
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("user");
 		Meeting meeting = new Meeting();
-		SimpleDateFormat formatter=new SimpleDateFormat("E MMM d HH:mm:ss Z yyyy");
+		SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
 		
-		
+	
 		//We check the duration first because we need it for the date's validity check
 		if(request.getParameter("duration").length() == 0 || request.getParameter("duration") == null) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -120,10 +120,9 @@ public class CreateMeeting extends HttpServlet{
 		
 		//if the number of selected users is not valid
 		else {
-			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			response.getWriter().println("Too many participants selected. Please remove " 
-					+ (Meeting.MAX_PARTECIPANTS - selectedUsersID.size()));
-//We have many SC_BAD_REQUEST , we need to distinguish them client-side because in this case the number of attempts needs to be increased
+					+ (selectedUsersID.size()-Meeting.MAX_PARTECIPANTS));
 			return;
 		}
 			
