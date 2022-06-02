@@ -47,7 +47,7 @@ function MeetingList(_msg,_meetingTable,_meetingBody){
 					}
 					else{
 						self.msg.textContet = "This is a list of meetings organize by you: ";
-						drawTable(organizedMeetingList);
+						self.drawTable(organizedMeetingList);
 					}
 				}
 				else if (xhr.status == 500)
@@ -70,7 +70,7 @@ function MeetingList(_msg,_meetingTable,_meetingBody){
 					}
 					else{
 						self.msg.textContet = "This is a list of meetings you were invited to: ";
-						drawTable(invitedMeetingList);
+						self.drawTable(invitedMeetingList);
 					}
 				}
 				else if (xhr.status == 500)
@@ -91,20 +91,20 @@ function MeetingList(_msg,_meetingTable,_meetingBody){
 			row.appendChild(title);
 			
 			date = document.createElement("td");
-			date.textContent = mission.meetingDate;
+			date.textContent = meeting.meetingDate;
 			row.appendChild(date);
 			
 			duration = document.createElement("td");
-			duration.textContent = mission.meetingDuration;
+			duration.textContent = meeting.meetingDuration;
 			row.appendChild(duration);
 			
-			if (mission.hasOwnProperty("organizerName")){
+			if (meeting.hasOwnProperty("organizerName")){
 				organizer = document.createElement("td");
-				organizer.textContent = missione.organizerName;
+				organizer.textContent = meeting.organizerName;
 				row.appendChild(organizer);
 			}
 			
-			self.meetingBody.innerHTML.appendChild(row);//appends a row to the current meetingBody
+			self.meetingBody.appendChild(row);//appends a row to the current meetingBody
 		});
 		
 		this.show(); //sets meetingTable content visible
@@ -120,10 +120,10 @@ function MeetingForm(_msg,_createMeetingForm, _createMeetingMsg){
 	//TODO forse va resettato dopo il refresh? 
 	
 	//TODO provare a sostituire con getELbyId		
-	this.querySelector("input[type='datetime-local']").setAttribute('min',now.toISOString().substring(0,16));
-	this.querySelector("input[type='number']").setAttribute('min',1);
+	this.createMeetingForm.querySelector("input[type='datetime-local']").setAttribute('min',this.now.toISOString().substring(0,16));
+	this.createMeetingForm.querySelector("input[type='number']").setAttribute('min',1);
 	
-	this.querySelector("input[type='button'].submit").addEventListener('click', (e) => {
+	this.createMeetingForm.querySelector("input[type='button'].submit").addEventListener('click', (e) => {
 		var fieldset = e.target.closest('fieldset'), valid = true;
 		
 		for (let i = 0; i<fieldset.elements.length; i++){
@@ -237,14 +237,15 @@ function ModalWindow(_modalWindow,_modalMsg,_msg){
 function PageController(){
 	this.globalMsg = document.getElementById('errorMsg');
 	
-	this.start = function(){
+	this.start = function(){	
+		var self=this;
 		
 		this.personalMsg = new PersonalMsg(
 			window.sessionStorage.getItem('username'),
 			document.getElementById('id_username')
 		);
 		
-		this.orginzedMeetingsList = new MeetingList(
+		this.organizedMeetingsList = new MeetingList(
 			document.getElementById('organizedMeetingsMsg'), 
 			document.getElementById('organizedMeetings'),
 			document.getElementById('organizedMeetingsBody')
@@ -253,7 +254,7 @@ function PageController(){
 		this.invitedMeetingsList = new MeetingList(
 			document.getElementById('invitedMeetingsMsg'),
 			document.getElementById('invitedMeetings'),
-			document.getElementById('invitededMeetingsBody')
+			document.getElementById('invitedMeetingsBody')
 		);
 		
 		this.meetingForm = new MeetingForm(
@@ -276,7 +277,7 @@ function PageController(){
 		
 			var message = xhr.responseText;
 				if (xhr.status == 200)
-					this.maxNumPartiicpants = JSON.parse(message);
+					self.maxNumParticipants = JSON.parse(message);
 		});
 		
 		this.refresh = function(){
