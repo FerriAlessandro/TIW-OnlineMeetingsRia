@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Home</title>
 <link rel="stylesheet" type="text/css" media="all"
-	href="../css/style.css"/>
+	href="css/style.css"/>
 <script src="utils.js" charset="utf-8" defer></script>
 <script src="main.js" charset="utf-8" defer></script>
 </head>
@@ -59,15 +59,15 @@ else "You haven't been invited to any meeting yet" -->
 							Title: <input type="text" name="title" required/> <br><br>
 							Date and starting time: <input type="datetime-local" name="date" required/><br><br>
 							Duration (in minutes): <input type="number" name="duration" required /><br><br>
-							<p id="formErrorMsg"></p>
 							<input id="submitForm" type="button" class="submit" value="Submit">
 						</fieldset>
+						<p id="formErrorMsg"></p>
 					</form>
 				</td>
 			</tr>
 			</table>
 			
-			<div class="modalWindow">
+			<div id="modalWindow" class="modalWindow">
 			  <div class="modalHeader">
 			    <span class="close">&times;</span>
 			    <h2>Choose participants:</h2>
@@ -78,7 +78,7 @@ else "You haven't been invited to any meeting yet" -->
 			    	<fieldset id="participantsFieldset">
 			    	</fieldset>
 			    	<fieldset>
-			    		<input id="submitParticipans" type="button" class="submitParticipants" value="Submit">
+			    		<input id="submitParticipants" type="button" class="submitParticipants" value="Submit">
 			    		<input id="cancel" type="button" class="cancel" value="Cancel">
 			    	</fieldset>
 			    </form>

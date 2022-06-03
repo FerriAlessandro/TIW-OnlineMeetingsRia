@@ -20,8 +20,6 @@ public class GetMaxNumParticipants extends HttpServlet{
 		String maxNumParticipants = Integer.toString(Meeting.MAX_PARTECIPANTS);
 		
 		response.setStatus(HttpServletResponse.SC_OK);
-		response.setContentType("application/json");
-		response.setCharacterEncoding("UTF-8");
 		response.getWriter().write(maxNumParticipants);
 	}
 }
