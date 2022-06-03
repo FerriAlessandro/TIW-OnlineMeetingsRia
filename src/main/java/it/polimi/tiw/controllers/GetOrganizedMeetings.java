@@ -37,7 +37,7 @@ public class GetOrganizedMeetings extends HttpServlet{
 	
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String jsonUserMeetings;
-		Gson gson = new GsonBuilder().setDateFormat("E MMM d HH:mm:ss Z yyyy").create();
+		Gson gson = new GsonBuilder().setDateFormat("E, d MMM yyyy, HH:mm").create();
 		User currentUser = (User)request.getSession().getAttribute("user");
 		MeetingDAO meetingDAO = new MeetingDAO(connection);
 		try {

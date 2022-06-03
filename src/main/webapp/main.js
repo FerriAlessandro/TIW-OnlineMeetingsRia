@@ -46,7 +46,7 @@ function MeetingList(_msg,_meetingTable,_meetingBody){
 						self.msg.textContent = "You haven't organized any meeting yet";
 					}
 					else{
-						self.msg.textContet = "This is a list of meetings organize by you: ";
+						self.msg.textContent = "This is a list of meetings organized by you: ";
 						self.drawTable(organizedMeetingList);
 					}
 				}
@@ -74,7 +74,7 @@ function MeetingList(_msg,_meetingTable,_meetingBody){
 						self.msg.textContent = "You haven't been invited to any meeting yet";
 					}
 					else{
-						self.msg.textContet = "This is a list of meetings you were invited to: ";
+						self.msg.textContent = "This is a list of meetings you were invited to: ";
 						self.drawTable(invitedMeetingList);
 					}
 				}
@@ -103,6 +103,7 @@ function MeetingList(_msg,_meetingTable,_meetingBody){
 			
 			date = document.createElement("td");
 			date.textContent = meeting.meetingDate;
+			
 			row.appendChild(date);
 			
 			duration = document.createElement("td");
@@ -140,6 +141,7 @@ function MeetingForm(_msg,_createMeetingForm, _createMeetingMsg){
 			}
 		}
 		if (valid){
+			this.errormsg.textContent = "";
 			this.formCopy = fieldset.cloneNode(true); //copy used with the appenChild method, otherwise we move nodes from the original html
 			pageController.showModalWindow(this.formCopy);
 		}
@@ -190,13 +192,15 @@ function ModalWindow(_modalWindow,_modalMsg,_msg){
 						
 						if (xhr.status == 200){
 							this.modal.style.display = "none"; //close modal window
+							this.modalMsg.textContent = "";
 							pageController.refresh();
 							var fieldset = document.getElementById("participantsFieldset");
 							fieldset.innerHTML = "";
 						}
 						
 						else if(xhr.status == 500 || xhr.status == 400){
-							this.modalMsg.textContent = message;
+							this.msg.textContent = message;
+							this.modal.style.display = "none";
 							return;
 						}
 						else if(xhr.status==403){
@@ -209,7 +213,7 @@ function ModalWindow(_modalWindow,_modalMsg,_msg){
 			else{
 				this.attempts--;
 				this.modalMsg.textContent = "You selected too many participants. Please remove at least " 
-				+ (checkedParticipants.length - pageController.maxNumParticipants) + "You have "+ this.attempts +" left!";
+				+ (checkedParticipants.length - pageController.maxNumParticipants) + ". You have "+ this.attempts +" attempts left!";
 				
 				if (this.attempts == 0){
 					this.modal.style.display = "none"; //close modal window
@@ -258,6 +262,7 @@ function ModalWindow(_modalWindow,_modalMsg,_msg){
 		var fieldset, checkbox, label, br;
 		fieldset = document.getElementById("participantsFieldset");
 		fieldset.innerHTML = "";
+		this.modalMsg.textContent = "";
 		usersList.forEach(function(user){
 			checkbox = document.createElement("input");
 			checkbox.type = "checkbox";

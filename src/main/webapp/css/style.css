@@ -1,5 +1,21 @@
-table,th,tr{
+.boxed{
 	border: 1px solid black;
+}
+
+.notBoxed{
+	border: none;
+}
+
+tr, td{
+	border: 1px solid black;
+}
+
+#invitedMeetings{
+	margin-left: 50px;
+}
+
+#invitedMeetingsMsg{
+	margin-left: 50px;
 }
 
 .modalWindow {
@@ -8,6 +24,7 @@ table,th,tr{
   z-index: 1; /* Sit on top */
   left: 0;
   top: 0;
+  padding-top: 100px;
   width: 100%; /* Full width */
   height: 100%; /* Full height */
   overflow: auto; /* Enable scroll if needed */
@@ -16,12 +33,24 @@ table,th,tr{
 }
 
 /* Modal Content/Box */
-.modalBody {
+.modalContent {
+  position: relative;
   background-color: #fefefe;
-  margin: 15% auto; /* 15% from the top and centered */
-  padding: 20px;
+  margin:  auto; /* 15% from the top and centered */
+  padding: 0;
   border: 1px solid #888;
   width: 80%; /* Could be more or less, depending on screen size */
+}
+
+.modalHeader {
+  padding: 2px 16px;
+  background-color: white;
+  color: black;
+}
+
+.modalBody {
+	padding: 2px 16px;
+	padding-bottom: 15px;
 }
 
 /* The Close Button */

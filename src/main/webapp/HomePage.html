@@ -16,8 +16,8 @@
 	<div id="errorMsg" class="errorMessage"></div>
 	<p>Welcome back <span id="id_username"></span></p>
 		<table>
-			<tr>
-				<td>
+			<tr class = "notBoxed">
+				<td class="notBoxed">
 <!-- if there are meetings: "This is a list of the meetings organize by you"
 else "You haven't organized any meeting yet" -->
 					<p id="organizedMeetingsMsg"></p>
@@ -31,10 +31,10 @@ else "You haven't organized any meeting yet" -->
 								<th>Duration</th>
 							</tr>
 						</thead>
-						<tbody id="organizedMeetingsBody"></tbody>
+						<tbody id="organizedMeetingsBody" class="boxed"></tbody>
 					</table>
 				</td>
-				<td>
+				<td class = "notBoxed">
 <!-- if there are meetings: "This is a list of the meetings you were invited to"
 else "You haven't been invited to any meeting yet" -->
 					<p id="invitedMeetingsMsg"></p>
@@ -47,12 +47,12 @@ else "You haven't been invited to any meeting yet" -->
 								<th>Organizer</th>
 							</tr>
 						</thead>
-						<tbody id="invitedMeetingsBody"></tbody>
+						<tbody id="invitedMeetingsBody" class="boxed"></tbody>
 					</table>
 				</td>
 			</tr>
-			<tr>
-				<td colspan="2" align="center">
+			<tr class="notBoxed">
+				<td colspan="2" align="center" class="notBoxed">
 					<p id="createMeetingMsg">Complete the form below to create a new meeting</p>
 					<form id="createMeetingForm" action="#">
 						<fieldset>
@@ -69,21 +69,23 @@ else "You haven't been invited to any meeting yet" -->
 			
 
 			<div id = "modalWindow" class="modalWindow">
-			<div class="modalHeader">
-			    <span class="close">&times;</span>
-			    <h2>Choose participants:</h2>
-			 </div>
-			 <div class="modalBody">
-			 <p id="modalMsg"></p>
-			    <form id="participantsForm" action=#>
-			    	<fieldset id="participantsFieldset">
-			    	</fieldset>
-			    	<fieldset>
-			    		<input id="submitParticipants" type="button" class="submitParticipants" value="Submit">
-			    		<input id="cancel" type="button" class="cancel" value="Cancel">
-			    	</fieldset>
-			    </form>
-			  </div>
-</div>
+			<div class="modalContent">
+				<div class="modalHeader">
+			    	<span class="close">&times;</span>
+			    	<h2>Choose participants:</h2>
+				 </div>
+			 	<div class="modalBody">
+			 	<p id="modalMsg"></p>
+			   		 <form id="participantsForm" action=#>
+			    		<fieldset id="participantsFieldset">
+			    		</fieldset>
+			    		<fieldset>
+			    			<input id="submitParticipants" type="button" class="submitParticipants" value="Submit">
+			    			<input id="cancel" type="button" class="cancel" value="Cancel">
+			    		</fieldset>
+			    	</form>
+			  	</div>
+			</div>
+			</div>
 </body>
 </html>
