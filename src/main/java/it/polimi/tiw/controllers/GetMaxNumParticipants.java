@@ -18,7 +18,6 @@ public class GetMaxNumParticipants extends HttpServlet{
 	
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		String maxNumParticipants = Integer.toString(Meeting.MAX_PARTECIPANTS);
-		
 		response.setStatus(HttpServletResponse.SC_OK);
 		response.getWriter().write(maxNumParticipants);
 	}

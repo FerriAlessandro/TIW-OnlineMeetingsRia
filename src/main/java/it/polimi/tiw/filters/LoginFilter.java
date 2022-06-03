@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-@WebFilter(urlPatterns = {"/CreateMeeting", "/HomePage", "/SendMeetingData"})
+@WebFilter(urlPatterns = {"/CreateMeeting", "/GetInvitations", "/GetMaxNumParticipants", "/GetOrganizedMeetings", "/GetUsers", "/HomePage.html"})
 
 
 public class LoginFilter implements Filter{
@@ -41,7 +41,8 @@ public class LoginFilter implements Filter{
 		String path = req.getServletContext().getContextPath() + "/index.html";
 		HttpSession s = req.getSession();
 		if(s.isNew()|| s.getAttribute("user") == null) {
-			res.sendRedirect(path); //redirect to the login page
+			res.setStatus(403);
+			res.setHeader("Location", path); //redirect to the login page
 			return;
 		}
 		

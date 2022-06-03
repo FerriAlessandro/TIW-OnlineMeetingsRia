@@ -42,9 +42,9 @@ public class CreateMeeting extends HttpServlet{
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("user");
 		Meeting meeting = new Meeting();
-		SimpleDateFormat formatter=new SimpleDateFormat("E MMM d HH:mm:ss Z yyyy");
+		SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
 		
-		
+	
 		//We check the duration first because we need it for the date's validity check
 		if(request.getParameter("duration").length() == 0 || request.getParameter("duration") == null) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
