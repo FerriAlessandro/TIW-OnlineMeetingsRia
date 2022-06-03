@@ -1,6 +1,6 @@
 { //TODO PROVARE A CREARE UNA FORM FITTIZIA CON I DATI RIUNIONE E I PARTECIPANTI CHECKED
 
-let pageController = new PageController(); //TODO estrarre max num partecipanti dal server quando carichi la pagina
+var pageController = new PageController(); //TODO estrarre max num partecipanti dal server quando carichi la pagina
 
 window.addEventListener("load", () => {
     if (window.sessionStorage.getItem("username") == null) {
@@ -161,6 +161,8 @@ function ModalWindow(_modalWindow,_modalMsg,_msg){
 		
 		document.getElementById("cancel").addEventListener('click', (e) => {
 			this.modal.style.display = "none"; //close modal window
+			document.getElementById('participantsFieldset').innerHTML = "";
+			
 		}, false);
 		
 		document.getElementById("submitParticipants").addEventListener('click', (e) => {
@@ -311,6 +313,8 @@ function PageController(){
 			this.globalMsg
 		);
 		
+		this.closeModalButton = document.getElementsByClassName("close")[0];
+		
 		document.querySelector("a[href='Logout']").addEventListener('click', () => {
 	        window.sessionStorage.removeItem('username');
 	    });
@@ -345,7 +349,21 @@ function PageController(){
 		}
 		this.meetingForm.addButtonListener();
 		this.modalWindow.addButtonListener();
-	}
+		
+		this.closeModalButton.addEventListener('click', (e) => {
+			this.modalWindow.modal.style.display = 'none';
+			document.getElementById('participantsFieldset').innerHTML = "";
+		});
+		
+		var self = this;
+		
+		window.onclick = function(e) {
+  			if (e.target == document.getElementById('modalWindow')) {
+    			self.modalWindow.modal.style.display = "none";
+    			document.getElementById('participantsFieldset').innerHTML = "";
+  			}
+		}
 	
+	}
 }
 };
