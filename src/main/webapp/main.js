@@ -91,7 +91,7 @@ function MeetingList(_msg,_meetingTable,_meetingBody){
 	}
 	
 	this.drawTable = function(meetingList){
-		var row, title, date, duration, organizer, self = this;
+		var row, title, date, duration, organizer, span, self = this;
 		this.meetingBody.innerHTML = ""; //replace meetingBody content (whatever it is) with an empty string
 		
 		meetingList.forEach(function(meeting){
@@ -108,6 +108,9 @@ function MeetingList(_msg,_meetingTable,_meetingBody){
 			
 			duration = document.createElement("td");
 			duration.textContent = meeting.meetingDuration;
+			span = document.createElement("span");
+			span.textContent = " minutes";
+			duration.appendChild(span);
 			row.appendChild(duration);
 			
 			if (meeting.hasOwnProperty("organizerName")){
@@ -315,7 +318,7 @@ function PageController(){
 		this.modalWindow = new ModalWindow(
 			document.getElementById('modalWindow'),
 			document.getElementById('modalMsg'),
-			this.globalMsg
+			document.getElementById('formErrorMsg')
 		);
 		
 		this.closeModalButton = document.getElementsByClassName("close")[0];
