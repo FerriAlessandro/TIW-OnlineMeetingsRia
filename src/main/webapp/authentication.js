@@ -24,4 +24,45 @@
 		}
 		else loginForm.reportValidity(); //TODO: testare se serve
 	} )
+	
+	document.getElementById("registrationButton").addEventListener('click', (e) =>{
+		var registrationForm = e.target.closest("form");
+		//var wellFormedEmail = /^[a-z0-9.]{1,64}@[a-z0-9.]{1,64}$/i;
+		var registrationMsg = document.getElementById("registrationErrMsg");
+		//var email = registrationForm.email;
+		var pass = document.getElementById("pass").value;
+		var repeatPass = document.getElementById("repeatPass").value;
+		
+		registrationMsg.textContent = "";
+        
+        if (!registrationForm.checkValidity()){
+        	registrationForm.reportValidity();
+        	return;
+        }
+        
+		/*else if (wellFormedEmail.test(email)){
+			registrationMsg.textContent = "Invalid e-mail format";
+			return;
+		}*/
+		else if (pass !== repeatPass){
+			registrationMsg.textContent = "Fields password and repeat password do not match";
+			return;
+		}
+		else {
+			serverCall("POST","Registration",registrationForm, (xhr) => {
+				if(xhr.readyState == XMLHttpRequest.DONE){
+					var msg = xhr.responseText;
+					
+					if (xhr.status == 200){
+						sessionStorage.setItem('username', msg);
+                		window.location.href = "HomePage.html";
+					}
+					else if (xhr.status == 400 || xhr.status == 500){
+						registrationMsg.textContent = msg;
+					}
+				}
+			});
+		}
+		
+	});
 })();

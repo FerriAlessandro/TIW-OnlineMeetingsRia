@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringEscapeUtils;
 
 import it.polimi.tiw.DAO.UserDAO;
 import it.polimi.tiw.beans.User;
@@ -31,10 +32,10 @@ public class CheckRegistration extends HttpServlet {
 	}
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		String username = request.getParameter("username");
-		String password = request.getParameter("password");
-		String repeatPassword = request.getParameter("repeat_password");
-		String email = request.getParameter("email");
+		String username = StringEscapeUtils.escapeJava(request.getParameter("username"));
+		String password = StringEscapeUtils.escapeJava(request.getParameter("password"));
+		String repeatPassword = StringEscapeUtils.escapeJava(request.getParameter("repeat_password"));
+		String email = StringEscapeUtils.escapeJava(request.getParameter("email"));
 		UserDAO userDAO = new UserDAO(connection);
 		final Pattern VALID_EMAIL_ADDRESS_REGEX = 
 			    Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
@@ -43,7 +44,7 @@ public class CheckRegistration extends HttpServlet {
 		
 		if (!matcher.matches()) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.getWriter().println("Invalid e-mali format");
+			response.getWriter().println("Invalid e-mail format");
 			return;
 		}
 		
@@ -55,7 +56,7 @@ public class CheckRegistration extends HttpServlet {
 		
 		if (username == null || username.isEmpty() || email == null ||
 				email.isEmpty() || password == null || password.isEmpty() 
-				|| password == null || password.isEmpty()) {
+				|| repeatPassword == null || repeatPassword.isEmpty()) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			response.getWriter().println("Credentials must not be empty or null");
 			return;

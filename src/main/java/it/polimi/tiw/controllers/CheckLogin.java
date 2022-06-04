@@ -11,6 +11,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringEscapeUtils;
+
 import it.polimi.tiw.DAO.UserDAO;
 import it.polimi.tiw.beans.User;
 import it.polimi.tiw.utils.ConnectionHandler;
@@ -29,8 +32,8 @@ public class CheckLogin extends HttpServlet{
 	public void doPost(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		UserDAO userDAO = new UserDAO(connection);
-		String username = request.getParameter("username");//escapeJava forse da fare
-		String password = request.getParameter("password");
+		String username = StringEscapeUtils.escapeJava(request.getParameter("username"));//escapeJava forse da fare
+		String password = StringEscapeUtils.escapeJava(request.getParameter("password"));
 		User user;
 		
 		if(username == null || username.isEmpty() || password == null || password.isEmpty()) {
