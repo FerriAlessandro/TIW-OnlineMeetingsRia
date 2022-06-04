@@ -42,6 +42,16 @@ public class CheckRegistration extends HttpServlet {
 		Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
 		boolean registration;
 		
+		
+		if (username == null || username.isEmpty() || email == null ||
+				email.isEmpty() || password == null || password.isEmpty() 
+				|| repeatPassword == null || repeatPassword.isEmpty()) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().println("Credentials must not be empty or null");
+			return;
+		}
+		
+		
 		if (!matcher.matches()) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			response.getWriter().println("Invalid e-mail format");
@@ -54,13 +64,7 @@ public class CheckRegistration extends HttpServlet {
 			return;
 		}
 		
-		if (username == null || username.isEmpty() || email == null ||
-				email.isEmpty() || password == null || password.isEmpty() 
-				|| repeatPassword == null || repeatPassword.isEmpty()) {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.getWriter().println("Credentials must not be empty or null");
-			return;
-		}
+		
 		
 		try {
 			registration = userDAO.checkRegistration(username, password, email);
