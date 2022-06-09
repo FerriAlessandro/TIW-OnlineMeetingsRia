@@ -1,6 +1,6 @@
-{ //TODO PROVARE A CREARE UNA FORM FITTIZIA CON I DATI RIUNIONE E I PARTECIPANTI CHECKED
+{
 
-var pageController = new PageController(); //TODO estrarre max num partecipanti dal server quando carichi la pagina
+var pageController = new PageController();
 
 window.addEventListener("load", () => {
     if (window.sessionStorage.getItem("username") == null) {
@@ -162,7 +162,14 @@ function ModalWindow(_modalWindow,_modalMsg,_msg){
 	this.modalMsg = _modalMsg;
 	this.attempts = 3;
 	this.modal = _modalWindow;
+
+	
 	this.addButtonListener = function(){
+		
+		document.getElementsByClassName("close")[0].addEventListener('click', (e) => {
+			this.modal.style.display = 'none';
+			document.getElementById('participantsFieldset').innerHTML = "";
+		});
 		
 		document.getElementById("cancel").addEventListener('click', (e) => {
 			this.modal.style.display = "none"; //close modal window
@@ -295,7 +302,6 @@ function PageController(){
 		);
 		this.personalMsg.show();
 		
-		this.personalMsg.show();
 		
 		this.organizedMeetingsList = new MeetingList(
 			document.getElementById('organizedMeetingsMsg'), 
@@ -321,7 +327,7 @@ function PageController(){
 			document.getElementById('formErrorMsg')
 		);
 		
-		this.closeModalButton = document.getElementsByClassName("close")[0];
+	
 		
 		document.querySelector("a[href='Logout']").addEventListener('click', () => {
 	        window.sessionStorage.removeItem('username');
@@ -347,7 +353,6 @@ function PageController(){
 			
 			this.organizedMeetingsList.populateOrganizedMeetings();
 			this.invitedMeetingsList.populateInvitedMeetings();
-			//document.getElementById("createMeetingForm").reset();
 			this.meetingForm.createMeetingForm.reset();
 		}
 		
@@ -357,11 +362,9 @@ function PageController(){
 		}
 		this.meetingForm.addButtonListener();
 		this.modalWindow.addButtonListener();
+
 		
-		this.closeModalButton.addEventListener('click', (e) => {
-			this.modalWindow.modal.style.display = 'none';
-			document.getElementById('participantsFieldset').innerHTML = "";
-		});
+		
 		
 		var self = this;
 		
