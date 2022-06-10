@@ -140,13 +140,14 @@ function MeetingForm(_msg,_createMeetingForm, _createMeetingMsg){
 			if (!fieldset.elements[i].checkValidity()){
 				fieldset.elements[i].reportValidity();
 				valid = false;
-				return;
+				//return; If we return here the "invalid field content" is not shown (the browser warning is shown anyway)
 			}
 		}
 		if (valid){
 			this.errormsg.textContent = "";
 			this.formCopy = fieldset.cloneNode(true); //copy used with the appenChild method, otherwise we move nodes from the original html
-			pageController.showModalWindow(this.formCopy);
+			pageController.showModalWindow(this.formCopy); //We pass through the pageController to keep modalWindow and meetingForm separated
+														   //if something needs to be modified we know it will be on the pageController	
 		}
 		else 
 			this.errormsg.textContent = "Invalid field content";
@@ -195,7 +196,7 @@ function ModalWindow(_modalWindow,_modalMsg,_msg){
 					form.appendChild(participant); //Add the checked participants
 				});
 				
-				serverCall("POST","CreateMeeting",form, (xhr) => {
+				serverCall("POST","CreateMeeting",form, (xhr) => {  //Arrow function to preserve the 'this'
 					
 					if (xhr.readyState == 4){
 						var message = xhr.responseText;
