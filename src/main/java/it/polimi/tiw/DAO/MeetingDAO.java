@@ -48,6 +48,8 @@ public class MeetingDAO{
 				meetings.add(tmp);
 			}
 		}
+		preparedStatement.close();
+		resultSet.close();
 
 		return meetings;
 
@@ -90,17 +92,19 @@ public class MeetingDAO{
 				meetings.add(tmp);
 			}
 		}
+		preparedStatement.close();
+		resultSet.close();
 		
 		return meetings;
 
 	}
 	
 	public void createMeeting(List<Integer> guests, Meeting meeting) throws SQLException {
-		PreparedStatement meetingPreparedStatement;
-		PreparedStatement invitationPreparedStatement;
-		PreparedStatement meetingIdPreparedStatement;
+		PreparedStatement meetingPreparedStatement = null;
+		PreparedStatement invitationPreparedStatement = null;
+		PreparedStatement meetingIdPreparedStatement = null;
 		
-		ResultSet meetingIdResultSet;
+		ResultSet meetingIdResultSet = null;
 		String addMeetingQuery = "INSERT INTO meetings (id_organizer,title,meeting_date,minutes) VALUES (?, ?, ?, ?)";
 		String addInvitationQuery = "INSERT INTO invitations (id_user, id_meeting) VALUES (?, ?)";
 		String getMeetingIdQuery = "SELECT max(id) FROM meetings";
@@ -140,12 +144,18 @@ public class MeetingDAO{
 			
 			invitationPreparedStatement.executeBatch();
 			
+			
 		} catch (SQLException e) {
 			connection.rollback(); // if update 1 OR 2 fails, roll back all work
 			throw e;
 			
 		} finally {
+			meetingIdResultSet.close();
+			invitationPreparedStatement.close();
+			meetingPreparedStatement.close();
+			meetingIdPreparedStatement.close();
 			connection.setAutoCommit(true);
+			
 		}
 
 	}
