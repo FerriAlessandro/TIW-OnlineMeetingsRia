@@ -1,6 +1,6 @@
 {
 
-var pageController = new PageController();
+let pageController = new PageController();
 
 window.addEventListener("load", () => {
     if (window.sessionStorage.getItem("username") == null) {
@@ -180,7 +180,7 @@ function ModalWindow(_modalWindow,_modalMsg,_msg){
 		
 		document.getElementById("submitParticipants").addEventListener('click', (e) => {
 			var checkedParticipants =  document.querySelectorAll('input[name=user_id]:checked');
-			var form = document.createElement('form'); //create a fake form
+			
 			
 			if (checkedParticipants.length == 0){
 				this.modalMsg.textContent = "Please select at least one participant";
@@ -188,6 +188,7 @@ function ModalWindow(_modalWindow,_modalMsg,_msg){
 			}
 				
 			else if(checkedParticipants.length <= pageController.maxNumParticipants){
+				var form = document.createElement('form'); //create a fake form
 				for(let i=0;pageController.meetingFields.elements.length>0;i++){
 					form.appendChild(pageController.meetingFields.elements[0]); //elements are removed from meetingForm... we need to keep the index at 0
 					}
