@@ -23,9 +23,10 @@ public class MeetingDAO{
 	public ArrayList<Meeting> getMeetingsByOwner(User user) throws SQLException {
 
 		PreparedStatement preparedStatement;
+		ResultSet resultSet;
 		String query = "SELECT * FROM meetings WHERE id_organizer = ?";
 		int id = user.getID();
-		ResultSet resultSet;
+		
 		ArrayList<Meeting> meetings = new ArrayList<>();
 		preparedStatement = connection.prepareStatement(query);
 		preparedStatement.setInt(1, id);
@@ -48,6 +49,9 @@ public class MeetingDAO{
 				meetings.add(tmp);
 			}
 		}
+		
+		resultSet.close();
+		preparedStatement.close();
 
 		return meetings;
 
@@ -60,7 +64,7 @@ public class MeetingDAO{
 		ResultSet resultSet;
 		ArrayList<Meeting> meetings = new ArrayList<>();
 
-		String query = "Select meetings.id, meetings.title, meetings.meeting_date, meetings.minutes,meetings.id_organizer, user.username FROM meetings JOIN invitations ON meetings.id = invitations.id_meeting JOIN user ON meetings.id_organizer = user.id WHERE invitations.id_user = ?";
+		String query = "SELECT meetings.id, meetings.title, meetings.meeting_date, meetings.minutes,meetings.id_organizer, user.username FROM meetings JOIN invitations ON meetings.id = invitations.id_meeting JOIN user ON meetings.id_organizer = user.id WHERE invitations.id_user = ?";
 		int id = user.getID();
 		preparedStatement = connection.prepareStatement(query);
 		preparedStatement.setInt(1, id);
@@ -91,16 +95,19 @@ public class MeetingDAO{
 			}
 		}
 		
+		resultSet.close();
+		preparedStatement.close();
+		
 		return meetings;
 
 	}
 	
 	public void createMeeting(List<Integer> guests, Meeting meeting) throws SQLException {
-		PreparedStatement meetingPreparedStatement;
-		PreparedStatement invitationPreparedStatement;
-		PreparedStatement meetingIdPreparedStatement;
+		PreparedStatement meetingPreparedStatement = null;
+		PreparedStatement invitationPreparedStatement = null;
+		PreparedStatement meetingIdPreparedStatement = null;
 		
-		ResultSet meetingIdResultSet;
+		ResultSet meetingIdResultSet = null;
 		String addMeetingQuery = "INSERT INTO meetings (id_organizer,title,meeting_date,minutes) VALUES (?, ?, ?, ?)";
 		String addInvitationQuery = "INSERT INTO invitations (id_user, id_meeting) VALUES (?, ?)";
 		String getMeetingIdQuery = "SELECT max(id) FROM meetings";
@@ -139,13 +146,20 @@ public class MeetingDAO{
 			}	
 			
 			invitationPreparedStatement.executeBatch();
+			connection.commit();
+			
 			
 		} catch (SQLException e) {
 			connection.rollback(); // if update 1 OR 2 fails, roll back all work
 			throw e;
 			
 		} finally {
+			meetingIdResultSet.close();
+			invitationPreparedStatement.close();
+			meetingPreparedStatement.close();
+			meetingIdPreparedStatement.close();
 			connection.setAutoCommit(true);
+			
 		}
 
 	}

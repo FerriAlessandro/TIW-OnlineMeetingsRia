@@ -54,7 +54,14 @@ public class CreateMeeting extends HttpServlet{
 
 		meeting.setTitle(request.getParameter("title"));
 		meeting.setOrganizerId(user.getID());
-		meeting.setDuration(Integer.parseInt(request.getParameter("duration")));
+		//if the duration is not a number
+		try {
+			meeting.setDuration(Integer.parseInt(request.getParameter("duration")));
+		}catch(NumberFormatException e) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().println("Please input a valid duration");
+			return;
+		}
 		meeting.setOrganizerName(user.getUserName());
 		try {
 			meeting.setDate(formatter.parse(request.getParameter("date")));
@@ -97,7 +104,15 @@ public class CreateMeeting extends HttpServlet{
 		
 		for(String id : invitedUsers) {
 			User u = new User();
-			u.setID(Integer.parseInt(id));
+			//if the ID is not a number
+			try {
+				u.setID(Integer.parseInt(id));
+			}catch(NumberFormatException e) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				response.getWriter().println("Invalid parameters type");
+				return;
+			}
+			
 			selectedUsersID.add(u.getID());
 		}
 		

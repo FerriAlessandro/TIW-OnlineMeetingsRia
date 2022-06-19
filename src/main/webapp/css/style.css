@@ -9,6 +9,10 @@
 tr, td{
 	border: 1px solid black;
 }
+.errorMessage{
+	color:red;
+	font-weight: bold;
+}
 
 #invitedMeetings{
 	margin-left: 50px;

@@ -1,6 +1,6 @@
-{ //TODO PROVARE A CREARE UNA FORM FITTIZIA CON I DATI RIUNIONE E I PARTECIPANTI CHECKED
+{
 
-var pageController = new PageController(); //TODO estrarre max num partecipanti dal server quando carichi la pagina
+let pageController = new PageController();
 
 window.addEventListener("load", () => {
     if (window.sessionStorage.getItem("username") == null) {
@@ -91,7 +91,7 @@ function MeetingList(_msg,_meetingTable,_meetingBody){
 	}
 	
 	this.drawTable = function(meetingList){
-		var row, title, date, duration, organizer, self = this;
+		var row, title, date, duration, organizer, span, self = this;
 		this.meetingBody.innerHTML = ""; //replace meetingBody content (whatever it is) with an empty string
 		
 		meetingList.forEach(function(meeting){
@@ -108,6 +108,9 @@ function MeetingList(_msg,_meetingTable,_meetingBody){
 			
 			duration = document.createElement("td");
 			duration.textContent = meeting.meetingDuration;
+			span = document.createElement("span");
+			span.textContent = " minutes";
+			duration.appendChild(span);
 			row.appendChild(duration);
 			
 			if (meeting.hasOwnProperty("organizerName")){
@@ -137,13 +140,14 @@ function MeetingForm(_msg,_createMeetingForm, _createMeetingMsg){
 			if (!fieldset.elements[i].checkValidity()){
 				fieldset.elements[i].reportValidity();
 				valid = false;
-				return;
+				//return; If we return here the "invalid field content" is not shown (the browser warning is shown anyway)
 			}
 		}
 		if (valid){
 			this.errormsg.textContent = "";
 			this.formCopy = fieldset.cloneNode(true); //copy used with the appenChild method, otherwise we move nodes from the original html
-			pageController.showModalWindow(this.formCopy);
+			pageController.showModalWindow(this.formCopy); //We pass through the pageController to keep modalWindow and meetingForm separated
+														   //if something needs to be modified we know it will be on the pageController	
 		}
 		else 
 			this.errormsg.textContent = "Invalid field content";
@@ -159,7 +163,14 @@ function ModalWindow(_modalWindow,_modalMsg,_msg){
 	this.modalMsg = _modalMsg;
 	this.attempts = 3;
 	this.modal = _modalWindow;
+
+	
 	this.addButtonListener = function(){
+		
+		document.getElementsByClassName("close")[0].addEventListener('click', (e) => {
+			this.modal.style.display = 'none';
+			document.getElementById('participantsFieldset').innerHTML = "";
+		});
 		
 		document.getElementById("cancel").addEventListener('click', (e) => {
 			this.modal.style.display = "none"; //close modal window
@@ -169,7 +180,7 @@ function ModalWindow(_modalWindow,_modalMsg,_msg){
 		
 		document.getElementById("submitParticipants").addEventListener('click', (e) => {
 			var checkedParticipants =  document.querySelectorAll('input[name=user_id]:checked');
-			var form = document.createElement('form'); //create a fake form
+			
 			
 			if (checkedParticipants.length == 0){
 				this.modalMsg.textContent = "Please select at least one participant";
@@ -177,6 +188,7 @@ function ModalWindow(_modalWindow,_modalMsg,_msg){
 			}
 				
 			else if(checkedParticipants.length <= pageController.maxNumParticipants){
+				var form = document.createElement('form'); //create a fake form
 				for(let i=0;pageController.meetingFields.elements.length>0;i++){
 					form.appendChild(pageController.meetingFields.elements[0]); //elements are removed from meetingForm... we need to keep the index at 0
 					}
@@ -185,7 +197,7 @@ function ModalWindow(_modalWindow,_modalMsg,_msg){
 					form.appendChild(participant); //Add the checked participants
 				});
 				
-				serverCall("POST","CreateMeeting",form, (xhr) => {
+				serverCall("POST","CreateMeeting",form, (xhr) => {  //Arrow function to preserve the 'this'
 					
 					if (xhr.readyState == 4){
 						var message = xhr.responseText;
@@ -292,7 +304,6 @@ function PageController(){
 		);
 		this.personalMsg.show();
 		
-		this.personalMsg.show();
 		
 		this.organizedMeetingsList = new MeetingList(
 			document.getElementById('organizedMeetingsMsg'), 
@@ -315,10 +326,10 @@ function PageController(){
 		this.modalWindow = new ModalWindow(
 			document.getElementById('modalWindow'),
 			document.getElementById('modalMsg'),
-			this.globalMsg
+			document.getElementById('formErrorMsg')
 		);
 		
-		this.closeModalButton = document.getElementsByClassName("close")[0];
+	
 		
 		document.querySelector("a[href='Logout']").addEventListener('click', () => {
 	        window.sessionStorage.removeItem('username');
@@ -344,7 +355,6 @@ function PageController(){
 			
 			this.organizedMeetingsList.populateOrganizedMeetings();
 			this.invitedMeetingsList.populateInvitedMeetings();
-			//document.getElementById("createMeetingForm").reset();
 			this.meetingForm.createMeetingForm.reset();
 		}
 		
@@ -354,11 +364,9 @@ function PageController(){
 		}
 		this.meetingForm.addButtonListener();
 		this.modalWindow.addButtonListener();
+
 		
-		this.closeModalButton.addEventListener('click', (e) => {
-			this.modalWindow.modal.style.display = 'none';
-			document.getElementById('participantsFieldset').innerHTML = "";
-		});
+		
 		
 		var self = this;
 		

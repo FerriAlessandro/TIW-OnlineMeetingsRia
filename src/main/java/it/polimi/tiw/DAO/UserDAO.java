@@ -29,16 +29,27 @@ public class UserDAO{
 
 		queryResult = preparedStatement.executeQuery();
 
-		if(!queryResult.isBeforeFirst()) //Credentials not found
+		if(!queryResult.isBeforeFirst()) { //Credentials not found
+			
+			queryResult.close();
+			preparedStatement.close();
 			return null;
+		}
+			
 
 		else {
 			queryResult.next(); //get the query's result
 			User user = new User();
 			user.setID(queryResult.getInt("id"));
 			user.setUserName(queryResult.getString("username"));
+			
+			queryResult.close();
+			preparedStatement.close();
 			return user;
 		}
+		
+		
+		
 			
 	}
 	
@@ -57,8 +68,11 @@ public class UserDAO{
 		
 		queryResult = preparedStatement.executeQuery();
 		
-		if(queryResult.isBeforeFirst()) //if the query returned a result 
+		if(queryResult.isBeforeFirst()) {  //if the query returned a result 
+			queryResult.close();
+			preparedStatement.close();
 			return false;
+		}
 		
 		else {
 			
@@ -68,6 +82,9 @@ public class UserDAO{
 			registrationPreparedStatement.setString(3, email);
 			registrationPreparedStatement.executeUpdate();
 			
+			queryResult.close();
+			preparedStatement.close();
+			registrationPreparedStatement.close();
 			return true; 	
 		}
 	}
@@ -95,6 +112,9 @@ public class UserDAO{
 			tmp.setUserName(queryResult.getString("username"));
 			users.add(tmp);
 		}
+		
+		queryResult.close();
+		preparedStatement.close();
 		return users;
 	}
 	
