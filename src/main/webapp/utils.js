@@ -3,7 +3,6 @@
 
 function serverCall(method, url, form, callback){
 	
-	var reset = false;
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function(){
 

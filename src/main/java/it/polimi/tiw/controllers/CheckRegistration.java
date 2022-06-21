@@ -84,12 +84,18 @@ public class CheckRegistration extends HttpServlet {
 				response.getWriter().println("Internal database error");
 				return;
 			}
-			request.getSession().setAttribute("user", user);
-			response.setStatus(HttpServletResponse.SC_OK);
-			response.setContentType("application/json");
-			response.setCharacterEncoding("UTF-8");
-			response.getWriter().println(username);
-			return;
+			if (user != null) {
+				request.getSession().setAttribute("user", user);
+				response.setStatus(HttpServletResponse.SC_OK);
+				response.setContentType("application/json");
+				response.setCharacterEncoding("UTF-8");
+				response.getWriter().println(username);
+				return;
+			}
+			else{ //should never happen
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.getWriter().println("Internal database error");
+			}
 		}
 		else {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
