@@ -1,4 +1,4 @@
-(function(){ //Instant invocation, otherwise the function becomes a Window's' (global object) property
+(function(){ //Instant invocation, otherwise the function becomes a Window's (global object) property
 	
 	document.getElementById("loginButton").addEventListener('click', (e) =>{
 		var loginForm = e.target.closest("form");
@@ -22,14 +22,12 @@
 				}
 			} ); //End of sendData 	
 		}
-		else loginForm.reportValidity(); //TODO: testare se serve
+		else loginForm.reportValidity();
 	} )
 	
 	document.getElementById("registrationButton").addEventListener('click', (e) =>{
 		var registrationForm = e.target.closest("form");
-		//var wellFormedEmail = /^[a-z0-9.]{1,64}@[a-z0-9.]{1,64}$/i;
 		var registrationMsg = document.getElementById("registrationErrMsg");
-		//var email = registrationForm.email;
 		var pass = document.getElementById("pass").value;
 		var repeatPass = document.getElementById("repeatPass").value;
 		
@@ -40,10 +38,6 @@
         	return;
         }
         
-		/*else if (wellFormedEmail.test(email)){
-			registrationMsg.textContent = "Invalid e-mail format";
-			return;
-		}*/
 		else if (pass !== repeatPass){
 			registrationMsg.textContent = "Fields password and repeat password do not match";
 			return;

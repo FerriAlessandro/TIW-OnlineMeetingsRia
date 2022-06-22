@@ -170,7 +170,7 @@ function ModalWindow(_modalWindow,_modalMsg,_msg){
 		document.getElementsByClassName("close")[0].addEventListener('click', (e) => {
 			this.modal.style.display = 'none';
 			document.getElementById('participantsFieldset').innerHTML = "";
-		});
+		}, false);
 		
 		document.getElementById("cancel").addEventListener('click', (e) => {
 			this.modal.style.display = "none"; //close modal window

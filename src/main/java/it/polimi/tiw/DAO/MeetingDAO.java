@@ -48,8 +48,8 @@ public class MeetingDAO{
 				meetings.add(tmp);
 			}
 		}
-		preparedStatement.close();
 		resultSet.close();
+		preparedStatement.close();
 
 		return meetings;
 
@@ -92,8 +92,8 @@ public class MeetingDAO{
 				meetings.add(tmp);
 			}
 		}
-		preparedStatement.close();
 		resultSet.close();
+		preparedStatement.close();
 		
 		return meetings;
 
@@ -144,17 +144,17 @@ public class MeetingDAO{
 			
 			invitationPreparedStatement.executeBatch();
 			
-			
+			connection.commit();
 		} catch (SQLException e) {
 			connection.rollback(); // if update 1 OR 2 fails, roll back all work
 			throw e;
 			
 		} finally {
-			meetingIdResultSet.close();
+			meetingIdResultSet.close(); //SetAutoCommit(true) will also close resultset and statements, these instructions can be removed 
 			invitationPreparedStatement.close();
 			meetingPreparedStatement.close();
 			meetingIdPreparedStatement.close();
-			connection.setAutoCommit(true);
+			connection.setAutoCommit(true); //This will also commit the transaction (otherwise you can use connection.Commit() )
 			
 		}
 
