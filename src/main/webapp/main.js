@@ -158,11 +158,12 @@ function MeetingForm(_msg,_createMeetingForm, _createMeetingMsg){
 	
 }
 	
-function ModalWindow(_modalWindow,_modalMsg,_msg){
+function ModalWindow(_modalWindow,_modalMsg,_msg, _participantsMsg){
 	this.msg = _msg;
 	this.modalMsg = _modalMsg;
 	this.attempts = 3;
 	this.modal = _modalWindow;
+	this.participantsMsg = _participantsMsg;
 
 	
 	this.addButtonListener = function(){
@@ -272,6 +273,7 @@ function ModalWindow(_modalWindow,_modalMsg,_msg){
 	
 	this.update = function(usersList){		
 		var fieldset, checkbox, label, br;
+		this.participantsMsg.textContent = "You can choose up to "+pageController.maxNumParticipants+" participants";
 		fieldset = document.getElementById("participantsFieldset");
 		fieldset.innerHTML = "";
 		this.modalMsg.textContent = "";
@@ -326,7 +328,8 @@ function PageController(){
 		this.modalWindow = new ModalWindow(
 			document.getElementById('modalWindow'),
 			document.getElementById('modalMsg'),
-			document.getElementById('formErrorMsg')
+			document.getElementById('formErrorMsg'),
+			document.getElementById('numOfParticipantsMsg')
 		);
 		
 	
@@ -341,6 +344,7 @@ function PageController(){
 				var message = xhr.responseText;
 					if (xhr.status == 200)
 						this.maxNumParticipants = parseInt(message);
+						
 				
 					else if(xhr.status==403){
 						window.location.href = xhr.getResponseHeader("Location");
