@@ -49,6 +49,10 @@ public class MeetingDAO{
 				meetings.add(tmp);
 			}
 		}
+<<<<<<< HEAD
+=======
+		
+>>>>>>> ff496e2649e7cfc6e4dbad891c2bad5ff41e8bee
 		resultSet.close();
 		preparedStatement.close();
 
@@ -93,6 +97,10 @@ public class MeetingDAO{
 				meetings.add(tmp);
 			}
 		}
+<<<<<<< HEAD
+=======
+		
+>>>>>>> ff496e2649e7cfc6e4dbad891c2bad5ff41e8bee
 		resultSet.close();
 		preparedStatement.close();
 		

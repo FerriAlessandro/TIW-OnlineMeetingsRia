@@ -53,7 +53,7 @@ function MeetingList(_msg,_meetingTable,_meetingBody){
 				else if (xhr.status == 500)
 					self.msg.textContent = message;
 				
-				else if(xhr.status==403){
+				else if(xhr.status == 403){
 					window.location.href = xhr.getResponseHeader("Location");
                   	window.sessionStorage.removeItem('username');
 				}
@@ -103,11 +103,11 @@ function MeetingList(_msg,_meetingTable,_meetingBody){
 			
 			date = document.createElement("td");
 			date.textContent = meeting.meetingDate;
-			
 			row.appendChild(date);
 			
 			duration = document.createElement("td");
 			duration.textContent = meeting.meetingDuration;
+			
 			span = document.createElement("span");
 			span.textContent = " minutes";
 			duration.appendChild(span);
@@ -151,7 +151,7 @@ function MeetingForm(_msg,_createMeetingForm, _createMeetingMsg){
 		}
 		else 
 			this.errormsg.textContent = "Invalid field content";
-	}, false);
+		}, false);
 	}
 	
 
@@ -167,7 +167,7 @@ function ModalWindow(_modalWindow,_modalMsg,_msg){
 	
 	this.addButtonListener = function(){
 		
-		document.getElementsByClassName("close")[0].addEventListener('click', (e) => {
+		document.getElementsByClassName("close").addEventListener('click', (e) => {
 			this.modal.style.display = 'none';
 			document.getElementById('participantsFieldset').innerHTML = "";
 		}, false);
@@ -191,7 +191,7 @@ function ModalWindow(_modalWindow,_modalMsg,_msg){
 				var form = document.createElement('form'); //create a fake form
 				for(let i=0;pageController.meetingFields.elements.length>0;i++){
 					form.appendChild(pageController.meetingFields.elements[0]); //elements are removed from meetingForm... we need to keep the index at 0
-					}
+				}
 				
 				checkedParticipants.forEach(function(participant){
 					form.appendChild(participant); //Add the checked participants
