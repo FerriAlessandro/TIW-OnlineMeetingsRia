@@ -167,7 +167,7 @@ function ModalWindow(_modalWindow,_modalMsg,_msg){
 	
 	this.addButtonListener = function(){
 		
-		document.getElementsByClassName("close").addEventListener('click', (e) => {
+		document.getElementsByClassName("close")[0].addEventListener('click', (e) => {
 			this.modal.style.display = 'none';
 			document.getElementById('participantsFieldset').innerHTML = "";
 		}, false);

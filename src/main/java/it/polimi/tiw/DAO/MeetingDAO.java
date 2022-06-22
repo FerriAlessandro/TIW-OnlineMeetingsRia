@@ -144,7 +144,6 @@ public class MeetingDAO{
 			}	
 			
 			invitationPreparedStatement.executeBatch();
-			connection.commit();
 			
 			connection.commit();
 		} catch (SQLException e) {
